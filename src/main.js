@@ -1,6 +1,8 @@
 
 // object are in the scene
 
+const gameObj = new Game();
+
 function init() {
 	const scene = new THREE.Scene();
 	const gui = new dat.GUI();
@@ -16,7 +18,10 @@ function init() {
 	const sphere = createSphere(0.05);
 
 	// const light = createPointLight(1);
-	const light = createSpotLight(1);
+	// const light = createSpotLight(1);
+	const light = createDirectionalLight(1);
+	const ambientLight = createAmbientLight(1);
+
 	light.position.y = 3;
 	light.intensity = 2;
 	
@@ -29,18 +34,18 @@ function init() {
 	gui.add(light.position, "y", 0, 6);
 	gui.add(light.position, "x", -9, 9);
 	gui.add(light.position, "z", -9, 9);
-	gui.add(light, "penumbra", 0, 1)
-
+	gui.add(ambientLight, "intensity", 0, 1)
+	// gui.add(light, "penumbra", 0, 1)
 
 	scene.add(plane1);
-	//scene.add(box1);
 	scene.add(boxGroup);
 	scene.add(light);
 	light.add(sphere);
 	scene.add(helper);
+	scene.add(ambientLight);
 	
 	const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-	
+
 	camera.position.x = 1;
 	camera.position.y = 2;
 	camera.position.z = 5;
@@ -59,15 +64,35 @@ function init() {
 
 }
 
-// function createDirectedLight()
+function createAmbientLight(intensity){
+	const light = new THREE.AmbientLight("rgb(20, 60, 100)", intensity);
+
+	return light;
+}
 
 function createSpotLight(intensity){
 	const light = new THREE.SpotLight(0xffffff, intensity);
 	light.castShadow = true;
 	light.shadow.bias = 0.001;
+ 
+	light.shadow.mapSize.width = 1920;
+	light.shadow.mapSize.height = 1080;
+
+	return light;
+}
+
+function createDirectionalLight(intensity){
+	const light = new THREE.DirectionalLight(0xffffff, intensity);
+	light.castShadow = true;
+	light.shadow.bias = 0.001;
 
 	light.shadow.mapSize.width = 1920;
 	light.shadow.mapSize.height = 1080;
+
+	light.shadow.camera.left = -15;
+	light.shadow.camera.right = 15;
+	light.shadow.camera.top = 15;
+	light.shadow.camera.bottom = -15;
 
 	return light;
 }
@@ -137,6 +162,10 @@ function update(renderer, scene, camera, controls) {
 	requestAnimationFrame(function() {
 		update(renderer, scene, camera, controls);
 	});
+}
+
+function drawField(field) {
+
 }
 
 init();
