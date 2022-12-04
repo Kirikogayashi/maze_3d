@@ -1,7 +1,7 @@
 
 // object are in the scene
 
-const gameObj = new Game();
+const game = new Game(21);
 
 function init() {
 	const scene = new THREE.Scene();
@@ -164,7 +164,10 @@ function update(renderer, scene, camera, controls) {
 	});
 }
 
-function drawField(field) {
+function drawGameField(){
+	const gamefield = new THREE.Group();
+	const separationMultiplier = 1.05;
+	
 
 }
 
