@@ -9,9 +9,8 @@ function init() {
 
 	//const box1 = createBox(1, 1, 1);
 	//box1.position.y = box1.geometry.parameters.height / 2;
-	const boxGroup = createBoxGrid(13, 1.5);
 
-	const plane1 = createPlane(20);
+	const plane1 = createPlane(27);
 	plane1.name = "plane-1";
 	plane1.rotation.x = Math.PI / 2;
 
@@ -21,6 +20,7 @@ function init() {
 	// const light = createSpotLight(1);
 	const light = createDirectionalLight(1);
 	const ambientLight = createAmbientLight(1);
+	const gamefield = drawGameField();
 
 	light.position.y = 3;
 	light.intensity = 2;
@@ -38,7 +38,7 @@ function init() {
 	// gui.add(light, "penumbra", 0, 1)
 
 	scene.add(plane1);
-	scene.add(boxGroup);
+	scene.add(gamefield);
 	scene.add(light);
 	light.add(sphere);
 	scene.add(helper);
@@ -167,8 +167,24 @@ function update(renderer, scene, camera, controls) {
 function drawGameField(){
 	const gamefield = new THREE.Group();
 	const separationMultiplier = 1.05;
-	
 
+
+	for (let i = 0; i < game.fieldSize; i++){
+		for (let j = 0; j < game.fieldSize; j++){
+			if (game.gameFieldModel[i][j] == 1){
+				const box = createBox(1, 1, 1)
+				box.position.x = i * separationMultiplier;
+				box.position.y = box.geometry.parameters.height / 2;
+				box.position.z = j * separationMultiplier;
+				gamefield.add(box);
+			}
+		}
+	}
+
+	gamefield.position.x = -((game.fieldSize - 1) * separationMultiplier) / 2;
+	gamefield.position.z = -((game.fieldSize - 1) * separationMultiplier) / 2;
+
+	return gamefield;
 }
 
 init();
