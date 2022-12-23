@@ -30,7 +30,7 @@ function init() {
 	light.position.x = 0;
 	light.position.z = 0;
 
-	gui.add(light, "intensity", 0, 10);
+	gui.add(light, "intensity", 0, 3);
 	gui.add(light.position, "y", 0, 6);
 	gui.add(light.position, "x", -9, 9);
 	gui.add(light.position, "z", -9, 9);
