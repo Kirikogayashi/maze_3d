@@ -22,18 +22,18 @@ function init() {
 	const ambientLight = createAmbientLight(1);
 	const gamefield = drawGameField();
 
-	light.position.y = 3;
+	light.position.y = 9;
 	light.intensity = 2;
 	
 	const helper = new THREE.CameraHelper(light.shadow.camera);
 	
-	light.position.x = 0;
-	light.position.z = 0;
+	light.position.x = 13;
+	light.position.z = 13;
 
 	gui.add(light, "intensity", 0, 3);
-	gui.add(light.position, "y", 0, 6);
-	gui.add(light.position, "x", -9, 9);
-	gui.add(light.position, "z", -9, 9);
+	gui.add(light.position, "y", 0, 9);
+	gui.add(light.position, "x", -13, 13);
+	gui.add(light.position, "z", -13, 13);
 	gui.add(ambientLight, "intensity", 0, 1)
 	// gui.add(light, "penumbra", 0, 1)
 
