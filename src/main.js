@@ -1,7 +1,7 @@
 
 // object are in the scene
 
-const game = new Game(21);
+const game = new Game(27);
 
 function init() {
 	const scene = new THREE.Scene();
@@ -15,11 +15,12 @@ function init() {
 	plane1.rotation.x = Math.PI / 2;
 
 	const sphere = createSphere(0.05);
+	const pointLight = createPointLight(4);
 
 	// const light = createPointLight(1);
 	// const light = createSpotLight(1);
-	const light = createDirectionalLight(1);
-	const ambientLight = createAmbientLight(1);
+	const light = createDirectionalLight(2);
+	const ambientLight = createAmbientLight(1.5);
 	const gamefield = drawGameField();
 
 	light.position.y = 9;
@@ -65,7 +66,7 @@ function init() {
 }
 
 function createAmbientLight(intensity){
-	const light = new THREE.AmbientLight("rgb(20, 60, 100)", intensity);
+	const light = new THREE.AmbientLight("rgb(140, 45, 120)", intensity);
 
 	return light;
 }
@@ -166,7 +167,7 @@ function update(renderer, scene, camera, controls) {
 
 function drawGameField(){
 	const gamefield = new THREE.Group();
-	const separationMultiplier = 1.05;
+	const separationMultiplier = 1;
 
 
 	for (let i = 0; i < game.fieldSize; i++){
