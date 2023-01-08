@@ -1,20 +1,16 @@
 const game = new Game(27);
-document.onkeydown = getPressed
+document.onkeydown = getPressed;
 
 function init() {
 	const scene = new THREE.Scene();
 	const gui = new dat.GUI();
 	const clock = new THREE.Clock();
 
-	//const box1 = createBox(1, 1, 1);
-	//box1.position.y = box1.geometry.parameters.height / 2;
-
 	const plane1 = createPlane(27);
 	plane1.name = "plane-1";
 	plane1.rotation.x = Math.PI / 2;
 
 	const player = getPlayer();
-	
 	const boxGrid = getGameField();
 	boxGrid.name = "gameField";
 
@@ -35,7 +31,7 @@ function init() {
 	gui.add(light.position, "y", 0, 9);
 	gui.add(light.position, "x", -13, 13);
 	gui.add(light.position, "z", -13, 13);
-	gui.add(ambientLight, "intensity", 0, 1)
+	gui.add(ambientLight, "intensity", 0, 3)
 	// gui.add(light, "penumbra", 0, 1)
 
 	scene.add(plane1);
@@ -167,21 +163,34 @@ function update(renderer, scene, camera, controls, clock) {
 		child.position.y = child.scale.y / 2;
 	});
 
-	const player = scene.getElementByName("player");
+	const player = scene.getObjectByName("player");
 	player.position.y = 0.5;
-	player.position.x = game.player.position[0] - ((game.fieldSize - 1)) / 2;
-	player.position.z = game.player.position[1] - ((game.fieldSize - 1)) / 2;
+	//player.position.x = game.player.position[0] - ((game.fieldSize - 1)) / 2;
+	//player.position.z = game.player.position[1] - ((game.fieldSize - 1)) / 2;
+
+	if (player.position.x < (game.player.position[0] - (game.fieldSize - 1) / 2) && diffX(player) < -0.05) {
+		player.position.x += 0.05;
+	} else if (player.position.x > (game.player.position[0] - (game.fieldSize - 1) / 2) && diffX(player) > 0.05) {
+		player.position.x -= 0.05;
+	} 
+
+	if (player.position.z < (game.player.position[1] - (game.fieldSize - 1) / 2) && diffZ(player) < -0.05) {
+		player.position.z += 0.05;
+	} else if (player.position.z > (game.player.position[1] - (game.fieldSize - 1) / 2) && diffZ(player) > 0.05) {
+		player.position.z -= 0.05;
+	}
 
 	requestAnimationFrame(function() {
 		update(renderer, scene, camera, controls, clock);
 	});
 }
 
-function getPressed(event) {
-	if(evnt.keyCode == "40") {
-		const newPosition = game.player.goDown();
+function diffX(player) {
+	return player.position.x - (game.player.position[0] - ((game.fieldSize - 1)) / 2);
+}
 
-	}
+function diffZ(player) {
+	return player.position.z - (game.player.position[1] - ((game.fieldSize - 1)) / 2);
 }
 
 function getGameField(){
@@ -207,17 +216,29 @@ function getGameField(){
 	return gamefield;
 }
 
+function getPressed(event) {
+	if (event.keyCode == "40") {
+		game.player.goDown();
+	} else if (event.keyCode == "38") {
+		game.player.goUp();
+	} else if (event.keyCode == "37") {
+		game.player.goLeft();
+	} else if (event.keyCode == "39") {
+		game.player.goRight();
+	}
+}
+
 function getPlayer() {
 	const pointLight = createPointLight(1);
+	pointLight.name = "player"
 	const sphere = createSphere(0.05);
+	pointLight.add(sphere);
 
 	pointLight.position.y = 0.5;
 	pointLight.position.x = game.player.position[0] - ((game.fieldSize - 1)) / 2;
 	pointLight.position.z = game.player.position[1] - ((game.fieldSize - 1)) / 2;
 
-	pointLight.add(sphere);
-
 	return pointLight;
 }
 
-init();
+const scene = init();

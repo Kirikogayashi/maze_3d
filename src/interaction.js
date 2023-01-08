@@ -5,9 +5,27 @@ class Player{
 	}
 
 	goDown(){
-		if(this.gameField[position[0] - 1][position[1]] == 0) {
-			position = [position[0] - 1, position[1]]
+		if(this.gameField[this.position[0]][this.position[1] + 1] == 0) {
+			this.position = [this.position[0], this.position[1] + 1]
+
 		}
-		return this.position;
+	}
+
+	goUp() {
+		if (this.gameField[this.position[0]][this.position[1] - 1] == 0) {
+			this.position = [this.position[0], this.position[1] - 1];
+		}
+	}
+
+	goLeft() {
+		if (this.gameField[this.position[0] - 1][this.position[1]] == 0) {
+			this.position = [this.position[0] - 1, this.position[1]];
+		}
+	}
+
+	goRight() {
+		if (this.gameField[this.position[0] + 1][this.position[1]] == 0) {
+			this.position = [this.position[0] + 1, this.position[1]];
+		}
 	}
 }
