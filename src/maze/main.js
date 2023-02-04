@@ -16,8 +16,10 @@ function init() {
 
 	// const light = createPointLight(1);
 	// const light = createSpotLight(1);
-	const light = createDirectionalLight(2);
 	const ambientLight = createAmbientLight(1.5);
+
+	const light = createDirectionalLight(2);
+	light.name = "dayLight";
 
 	light.position.y = 9;
 	light.intensity = 2;
@@ -103,14 +105,40 @@ function createSphere (radius){
 	return mesh;
 }
 
-function createBox(w, h, d) {
+function getMaterial(type, color) {
+  var material;
+  var materialOptions = {
+    color: (color === undefined) ? "rgb(255, 255, 255)" : color,
+  }
 
+  if (type == "basic") {
+    material = new THREE.MeshBasicMaterial(materialOptions);
+  } else if (type == "lambert") {
+    material = new THREE.MeshLambertMaterial(materialOptions);
+  } else if (type == "phong") {
+    material = new THREE.MeshPhongMaterial(materialOptions);
+  } else if (type == "standart") {
+    material = new THREE.MeshStandardMaterial(materialOptions);
+  } else {
+    material = new THREE.MeshBasicMaterial(materialOptions);
+  }
+
+  return material;
+}
+
+function createBoxMat(material, w, h, d){
 	const geometry = new THREE.BoxGeometry(w, h, d);
+	const mesh = new THREE.Mesh(geometry, material);
+	mesh.castShadow = true;
+
+	return mesh;
+}
+
+function createBox(w, h, d) {
 	const material = new THREE.MeshPhongMaterial({
 		color: "rgb(120, 120, 120)"
 	});
-	const mesh = new THREE.Mesh(geometry, material);
-	mesh.castShadow = true;
+	const mesh = createBoxMat(material, w, h, d);
 	return mesh;
 }
 
@@ -120,7 +148,7 @@ function createBoxGrid(amount, separationMultiplier) {
 	for (let i = 0;  i < amount; i++){
 		const box = createBox(1,1,1);
 		for (let j = 0; j < amount; j++){
-			const hBox = createBox(1,1,1)
+			//const hBox = createBox(getMaterial("basic"), 1,1,1)
 			hBox.position.x = i * separationMultiplier;
 			hBox.position.y = hBox.geometry.parameters.height / 2;
 			hBox.position.z = j * separationMultiplier;
@@ -134,14 +162,21 @@ function createBoxGrid(amount, separationMultiplier) {
 	return group;
 }
 
-function createPlane(size) {
+function createPlaneMat(material, size) {
 	const geometry = new THREE.PlaneGeometry(size, size);
+	const mesh = new THREE.Mesh(geometry, material);
+	mesh.receiveShadow = true;
+
+	return mesh;
+}
+
+function createPlane(size) {
 	const material = new THREE.MeshPhongMaterial({
 		color: "rgb(120, 120, 120)",
 		side: THREE.DoubleSide
 	});
-	const mesh = new THREE.Mesh(geometry, material);
-	mesh.receiveShadow = true;
+	const mesh = createPlaneMat(material, size);
+
 	return mesh;
 }
 
@@ -151,6 +186,8 @@ function createPointLight(intensity) {
 	return light;
 }
 
+let intDiff = 0.005;
+let yDiff = 0.25;
 function update(renderer, scene, camera, controls, clock) {
 	renderer.render(scene, camera);
 
@@ -180,9 +217,30 @@ function update(renderer, scene, camera, controls, clock) {
 		player.position.z -= 0.05;
 	}
 
+	const dayLight = scene.getObjectByName("dayLight");
+	intDiff = updateLight(dayLight, intDiff);
+	yDiff = updateLightY(dayLight, yDiff);
+
 	requestAnimationFrame(function() {
 		update(renderer, scene, camera, controls, clock);
 	});
+}
+
+function updateLightY(light, diff) {
+	light.position.y += diff;
+	if (light.position.y > 100 || light.position.y < 0) {
+		diff = -diff
+	}
+
+	return diff;
+}
+
+function updateLight(light, diff) {
+	light.intensity += diff;
+	if (light.intensity > 2 || light.intensity < 0) {
+		diff = -diff
+	}
+	return diff;
 }
 
 function diffX(player) {
@@ -201,7 +259,8 @@ function getGameField(){
 	for (let i = 0; i < game.fieldSize; i++){
 		for (let j = 0; j < game.fieldSize; j++){
 			if (game.gameFieldModel[i][j] == 1){
-				const box = createBox(1, 1.5, 1)
+				//const box = createBox(1, 1.5, 1)
+				const box = createBoxMat(getMaterial("standart", "rgb(120, 120, 120)") ,1, 1.5, 1)
 				box.position.x = i * separationMultiplier;
 				box.position.y = box.geometry.parameters.height / 2;
 				box.position.z = j * separationMultiplier;
